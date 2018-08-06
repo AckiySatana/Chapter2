@@ -1,13 +1,11 @@
 package ru;
 
 import java.time.*;
+import java.util.Arrays;
 
 public class Tracker {
     private final Item[] items = new Item[100];
     private int position = 0;
-
-//Item item = new Item("test1","testDescription",123L);
-// привязка заявки к трекеру
 
     public Item add(Item item) {
         item.setId(this.generateId());
@@ -41,6 +39,7 @@ public class Tracker {
         for (int i = 0; i < this.items.length; i++) {
             if (this.items[i].getId().equals(id)) {
                 this.items[i] = item;
+                item.setId(id);
                 break;
             }
         }
@@ -52,29 +51,17 @@ public class Tracker {
      * @param id
      */
     public void delete(String id) {
-        Item[] it = new Item[this.items.length];
         for (int i = 0; i < this.items.length; i++) {
             if (this.items[i].getId().equals(id)) {
-                if (i - 1 >= 0) {
-                    System.arraycopy(this.items, 0, this.items, 0, i);
-                }
                 System.arraycopy(this.items, i + 1, this.items, i, this.items.length - i - 1);
+                this.position--;
                 break;
             }
         }
     }
 
     public Item[] findAll() {
-        int a;
-        Item[] it;
-        for (a = 0; a < this.items.length; a++) {
-            if (this.items[a] == null) {
-                break;
-            }
-        }
-        it = new Item[a];
-        System.arraycopy(this.items, 0, it, 0, a);
-        return it;
+        return Arrays.copyOf(this.items, this.position);
     }
 
     /**
@@ -83,17 +70,14 @@ public class Tracker {
      * Элементы, у которых совпадает name, копирует в результирующий массив и возвращает его;
      */
     public Item[] findByName(String key) {
-        Item[] all, ret = new Item[100];
+        Item[]  ret = new Item[position];
         int a = 0;
-        for (int i = 0; i < this.findAll().length; i++) {
+        for (int i = 0; i < this.items.length; i++) {
             if (this.items[i].getName() != null && this.items[i].getName().equals(key)) {
-                System.arraycopy(this.items, i, ret, a, 1);
-                a++;
+                ret[a++] = items[i];
             }
         }
-        all = new Item[a];
-        System.arraycopy(ret, 0, all, 0, a);
-        return all;
+        return Arrays.copyOf(ret, a);
     }
 
     /**
